@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
+
 
 const taskSchema = new mongoose.Schema({
   taskID: { type: Number, required: true },
