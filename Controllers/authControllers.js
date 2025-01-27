@@ -13,14 +13,26 @@ exports.register = async (req, res) => {
     }
 
     // Create new user
-    const user = new User({ username, email, password });
+    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+    const user = new User({ username, email, password: hashedPassword });
     await user.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user._id, username: user.username, email: user.email },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "3h" }
+    );
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+    });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
+
 
 // Login
 exports.login = async (req, res) => {
